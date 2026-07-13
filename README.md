@@ -18,7 +18,7 @@ Research Overview
 
 To understand the technical mechanics of the vulnerability, its systemic impact, and how it affects the affected user base, please refer to the comprehensive Security Assessment Report included in this repository.
 
-    Target System: status.php Endpoint ([target-portal].gov.bd)
+    Target System: status.php Endpoint notunkurisports.gov.bd)
 
     Supervising Authority: Ministry of Youth and Sports, Bangladesh
 
