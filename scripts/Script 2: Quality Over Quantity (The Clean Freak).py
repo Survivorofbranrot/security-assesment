@@ -1,0 +1,125 @@
+import base64
+import os
+import time
+import random
+from playwright.sync_api import sync_playwright
+
+def encode_number_to_base64(num_str):
+    bytes_data = num_str.encode('utf-8')
+    base64_bytes = base64.b64encode(bytes_data)
+    return base64_bytes.decode('utf-8')
+
+def download_and_render_pdfs(start, end):
+    output_dir = "rendered_player_copies"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    with sync_playwright() as p:
+        print("\n[+] Initializing automated printing engine...")
+        
+        # 1. Force High-Quality Vector and Image Graphics Flags
+        browser = p.chromium.launch(
+            headless=True,
+            executable_path="/usr/bin/chromium",
+            args=[
+                "--no-sandbox", 
+                "--disable-setuid-sandbox", 
+                "--disable-gpu",
+                "--blink-settings=imagesEnabled=true",       # Ensures images never fail globally
+                "--force-device-scale-factor=2"             # Emulates 2K resolution for crystal clear text/images
+            ]
+        )
+        
+        # 2. Strict Display Emulation
+        context = browser.new_context(
+            viewport={"width": 1440, "height": 900},
+            device_scale_factor=2,                          # Forces crisp High-DPI rendering
+            user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        )
+        page = context.new_page()
+        page.set_default_timeout(60000) 
+
+        for i in range(start, end + 1):
+            padded_number = f"{i:06d}"
+            base64_id = encode_number_to_base64(padded_number)
+            
+            url = f"https://[Redacted]/generate_pdf.php?id={base64_id}"
+            output_file_path = os.path.join(output_dir, f"{padded_number}.pdf")
+            
+            print(f" -> Processing Record #{padded_number}...")
+            
+            max_retries = 3
+            success = False
+            
+            for attempt in range(max_retries):
+                try:
+                    response = page.goto(url, wait_until="domcontentloaded")
+                    
+                    if response and response.status == 200:
+                        # QC Measure A: Simulate a fast page scroll to force lazy-loaded images/avatars to awake
+                        page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                        time.sleep(1.5)
+                        page.evaluate("window.scrollTo(0, 0)")
+                        time.sleep(2.0) 
+                        
+                        # QC Measure B: Frame layout control injecting clean cross-platform fonts
+                        page.add_style_tag(content="""
+                            @media print {
+                                html, body {
+                                    height: 99% !important;
+                                    font-size: 11px !important;
+                                    text-rendering: optimizeLegibility !important;
+                                    -webkit-font-smoothing: antialiased !important;
+                                    margin: 0 !important;
+                                    padding: 0 !important;
+                                    page-break-inside: avoid !important;
+                                    -webkit-print-color-adjust: exact !important;
+                                    print-color-adjust: exact !important;
+                                }
+                                .wrapper, .container, table {
+                                    page-break-inside: avoid !important;
+                                    break-inside: avoid !important;
+                                    margin-bottom: 2mm !important;
+                                }
+                                img, .photo-box {
+                                    max-height: 120px !important;
+                                    image-rendering: auto !important; /* Forces layout graphics engine to stay native */
+                                }
+                            }
+                        """)
+                        
+                        # QC Measure C: Generate the high-resolution uncompressed PDF file
+                        page.pdf(
+                            path=output_file_path, 
+                            format="A4",
+                            print_background=True,
+                            prefer_css_page_size=False,
+                            margin={"top": "6mm", "bottom": "6mm", "left": "8mm", "right": "8mm"}
+                        )
+                        print(f"    [✔] Successfully saved high-fidelity PDF: {padded_number}.pdf")
+                        success = True
+                        break
+                    else:
+                        status = response.status if response else "No Response"
+                        print(f"    [!] Attempt {attempt+1}: Server returned status {status}")
+                
+                except Exception as e:
+                    print(f"    [!] Attempt {attempt+1} failed connection: {str(e).splitlines()[0]}")
+                
+                time.sleep(2)
+            
+            if not success:
+                print(f"    [❌] Permanent failure for Record #{padded_number} after {max_retries} attempts.")
+            
+            time.sleep(random.uniform(1.5, 3.5))
+
+        browser.close()
+    print(f"\n[+] Task finished! Check your folder: '{output_dir}/'")
+
+if __name__ == "__main__":
+    try:
+        start_input = int(input("Enter STARTING record number: "))
+        end_input = int(input("Enter ENDING record number: "))
+        download_and_render_pdfs(start_input, end_input)
+    except ValueError:
+        print("[!] Error: Inputs must be numerical values only.")
