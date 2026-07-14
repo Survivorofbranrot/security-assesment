@@ -21,5 +21,6 @@ To understand the technical mechanics of the vulnerability, its systemic impact,
     Target System: status.php Endpoint notunkurisports.gov.bd
 
     Supervising Authority: Ministry of Youth and Sports, Bangladesh
+    Devloped & designed by : Greenlogic bd Ltd.
 
     Primary Objective: Defensive flaw identification and remediation guidance.
