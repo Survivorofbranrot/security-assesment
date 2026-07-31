@@ -1,26 +1,49 @@
-Security Assessment: Critical Data Exposure Vulnerability
-Executive Summary
+# Security Assessment: Critical Data Exposure Vulnerability
 
-This research details a critical vulnerability discovered within the status.php portal of notunkurisports.gov.bd, an online platform operating under the Ministry of Youth and Sports of Bangladesh. The vulnerability theoretically exposes the personal data of hundreds of thousands of individuals.
+## Executive Summary
 
-This assessment has been compiled to document the website's anatomy, analyze the flaw's practical impact on a national level, and outline the necessary steps for remediation.
-Legal Disclaimer & Terms of Use
+This repository documents a security assessment of a vulnerability identified within a government web application operated under the Ministry of Youth and Sports of Bangladesh.
 
-    CRITICAL NOTICE: The information, research, and materials contained in this repository are intended strictly for educational purposes, ethical research, and authorized defensive security optimization.
+The identified issue involves improper access control in a document generation workflow, which may allow unauthorized access to sensitive records due to insufficient server-side authorization validation.
 
-    No Liability: The author assumes absolutely no responsibility or liability for any direct, indirect, incidental, or consequential damages, losses, or legal repercussions arising from the misuse of the information or code contained in this repository.
+This assessment was created to document the vulnerability, explain the security impact, and provide recommended remediation guidance.
 
-    Ethical Scope: This research was conducted solely to identify architectural flaws and promote robust cybersecurity practices. It is not an invitation or a guide to exploit systems.
+---
 
-    Prohibited Actions: Do not attempt to access, extract, or manipulate data from systems you do not explicitly own or have written authorization to test. Unauthorized data access is illegal and punishable by law.
+## Responsible Disclosure Notice
 
-Research Overview
+This research is provided for:
 
-To understand the technical mechanics of the vulnerability, its systemic impact, and how it affects the affected user base, please refer to the comprehensive Security Assessment Report included in this repository.
+- Educational purposes
+- Defensive security improvement
+- Responsible vulnerability disclosure
 
-    Target System: status.php Endpoint notunkurisports.gov.bd
+The author does not encourage unauthorized access, data extraction, or testing against systems without explicit authorization.
 
-    Supervising Authority: Ministry of Youth and Sports, Bangladesh
-    Devloped & designed by : GreenLogic BD Ltd
+Any security testing should only be performed against systems where the tester has appropriate permission.
 
-    Primary Objective: Defensive flaw identification and remediation guidance.
+---
+
+## Research Scope
+
+**Affected System:** Government web application document generation workflow
+
+**Responsible Authority:** Ministry of Youth and Sports, Bangladesh
+
+**Software Developer:** GreenLogic BD Ltd
+
+**Primary Objective:** Identification of security weaknesses and recommendations for remediation.
+
+---
+
+## Disclosure Status
+
+The issue was reported to relevant government authorities through responsible disclosure channels. Additional technical details and verification materials are documented in the full security assessment report.
+
+---
+
+## Additional Information
+
+The repository contains security analysis, documentation, and remediation recommendations.
+
+Any proof-of-concept material has been provided solely for security validation purposes and should not be used against systems without authorization.
